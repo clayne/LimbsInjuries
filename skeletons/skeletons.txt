@@ -1,0 +1,205 @@
+00013679$00109C7C$Лисица$Actors\Canine\Character Assets Wolf\skeleton.nif
+0001D4B7$00108272$Бретонец$Actors\Character\Character Assets\skeleton.nif
+0001D4B7$00108272$Бретонец$actors\Character\Character Assets Female\skeleton_female.nif
+00089A85$0010760A$Норд$Actors\Character\Character Assets\skeleton.nif
+00089A85$0010760A$Норд$actors\Character\Character Assets Female\skeleton_female.nif
+00058303$00106C10$Волк$Actors\Canine\Character Assets Wolf\skeleton.nif
+0009192C$001052A3$Дракон$Actors\Dragon\Character Assets\Skeleton.nif
+00090CE2$00104F45$Олень$Actors\Deer\Character Assets\Skeleton.nif
+000F9060$000F905F$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+000F71E0$000F71DC$Драугр$Actors\Draugr\Character Assets\Skeleton.nif
+000F71E0$000F71DC$Драугр$Actors\Draugr\Character Assets\SkeletonF.nif
+000F3905$000F3903$Спригган$Actors\Spriggan\Character Assets\skeleton.nif
+000EBE2E$000EBE18$Драконий жрец$Actors\DragonPriest\Character Assets\skeleton.nif
+0009CB62$000EB872$Скелет$Actors\Draugr\Character Assets\Skeleton.nif
+0009CB62$000EB872$Скелет$Actors\Draugr\Character Assets\SkeletonF.nif
+0009A7AA$000F1AC4$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+000F1181$000F1182$Дымок$Actors\Wisp\Character Assets\skeleton.nif
+00072A08$000DE505$Лошадь$Actors\Horse\Character Assets\skeleton.nif
+0001BFC5$000CD657$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+00053F1D$000B6F95$Эссенция Магии$Actors\IceWraith\Character Assets\skeleton.nif
+000A91A0$000A919D$Кролик$Actors\Ambient\Chicken\Character Assets\Skeleton.nif
+00043AB8$00097A3D$Бретонец$Actors\Character\Character Assets\skeleton.nif
+00043AB8$00097A3D$Бретонец$actors\Character\Character Assets Female\skeleton_female.nif
+0004D6D0$0007EAF3$Норд$Actors\Character\Character Assets\skeleton.nif
+0004D6D0$0007EAF3$Норд$actors\Character\Character Assets Female\skeleton_female.nif
+00000EB3$0006DC99$Кролик$Actors\Ambient\Hare\Character Assets\skeleton.nif
+00032B94$000E7713$Дракон$Actors\Dragon\Character Assets\Skeleton.nif
+000B8F25$000CF89B$Олень$Actors\Deer\Character Assets\Skeleton.nif
+000136AC$000CDD84$Вервольф$Actors\WerewolfBeast\Character Assets\skeleton.nif
+000C97D1$000CAE13$Великан$Actors\Giant\Character Assets\skeleton.nif
+000490F2$000C3EDF$Злокрыс$Actors\Skeever\Character Assets\skeleton.nif
+00026DF0$000B9FD7$Скелет$Actors\Draugr\Character Assets\Skeleton.nif
+00026DF0$000B9FD7$Скелет$Actors\Draugr\Character Assets\SkeletonF.nif
+0005B830$000A82BA$Old People Race$Actors\Character\Character Assets\skeleton.nif
+0005B830$000A82BA$Old People Race$actors\Character\Character Assets Female\skeleton_female.nif
+02003D05$000A82B9$Орк$Actors\Character\Character Assets\skeleton.nif
+02003D05$000A82B9$Орк$actors\Character\Character Assets Female\skeleton_female.nif
+02003367$00088884$Лесной эльф$Actors\Character\Character Assets\skeleton.nif
+02003367$00088884$Лесной эльф$actors\Character\Character Assets Female\skeleton_female.nif
+0007B77E$00088846$Редгард$Actors\Character\Character Assets\skeleton.nif
+0007B77E$00088846$Редгард$actors\Character\Character Assets Female\skeleton_female.nif
+0001A771$00088844$Имперец$Actors\Character\Character Assets\skeleton.nif
+0001A771$00088844$Имперец$actors\Character\Character Assets Female\skeleton_female.nif
+0001A770$00088840$Высокий эльф$Actors\Character\Character Assets\skeleton.nif
+0001A770$00088840$Высокий эльф$actors\Character\Character Assets Female\skeleton_female.nif
+0001A76F$0008883D$Темный эльф$Actors\Character\Character Assets\skeleton.nif
+0001A76F$0008883D$Темный эльф$actors\Character\Character Assets Female\skeleton_female.nif
+000132AA$0008883C$Бретонец$Actors\Character\Character Assets\skeleton.nif
+000132AA$0008883C$Бретонец$actors\Character\Character Assets Female\skeleton_female.nif
+0001367B$00088794$Норд$Actors\Character\Character Assets\skeleton.nif
+0001367B$00088794$Норд$actors\Character\Character Assets Female\skeleton_female.nif
+00000EB2$000BA545$Грязевой краб$Actors\Mudcrab\Character Assets\skeleton.nif
+0002D1DE$000B7998$Скелет$Actors\Draugr\Character Assets\SkeletonS.nif
+0002D1DE$000B7998$Скелет$Actors\Draugr\Character Assets\SkeletonF.nif
+00023A8F$000A5601$Корус$Actors\Chaurus\Character Assets\skeleton.nif
+0009AA3B$0009AA44$Мать-дымок$Actors\Witchlight\Character Assets\skeleton.nif
+00071E6B$00071E6A$Invisible Race$Actors\Character\Character Assets\skeleton.nif
+00071E6B$00071E6A$Invisible Race$actors\Character\Character Assets Female\skeleton_female.nif
+0005E3D2$0006FC4A$Коза$Actors\Goat\Character Assets\skeleton.nif
+0001328A$00067CD8$Old People Race$Actors\Character\Character Assets\skeleton.nif
+0001328A$00067CD8$Old People Race$actors\Character\Character Assets Female\skeleton_female.nif
+00041FB4$00053477$Морозный паук$Actors\FrostbiteSpider\Character Assets\skeleton.nif
+00023A90$0004E785$Хайландская корова$Actors\Cow\Character Assets\skeleton.nif
+00023AAB$0004E507$Морозный паук$Actors\FrostbiteSpider\Character Assets\skeleton.nif
+000133AB$0002C65C$Бретонец$Actors\Character\Character Assets\skeleton.nif
+000133AB$0002C65C$Бретонец$actors\Character\Character Assets Female\skeleton_female.nif
+00013294$0002C65B$Норд$Actors\Character\Character Assets\skeleton.nif
+00013294$0002C65B$Норд$actors\Character\Character Assets Female\skeleton_female.nif
+00013292$0002C65A$Редгард$Actors\Character\Character Assets\skeleton.nif
+00013292$0002C65A$Редгард$actors\Character\Character Assets Female\skeleton_female.nif
+00013359$0002C659$Имперец$Actors\Character\Character Assets\skeleton.nif
+00013359$0002C659$Имперец$actors\Character\Character Assets Female\skeleton_female.nif
+0001327C$00013749$Лесной эльф$Actors\Character\Character Assets\skeleton.nif
+0001327C$00013749$Лесной эльф$actors\Character\Character Assets Female\skeleton_female.nif
+0001325F$00013748$Редгард$Actors\Character\Character Assets\skeleton.nif
+0001325F$00013748$Редгард$actors\Character\Character Assets Female\skeleton_female.nif
+00013291$00013747$Орк$Actors\Character\Character Assets\skeleton.nif
+00013291$00013747$Орк$actors\Character\Character Assets Female\skeleton_female.nif
+00000007$00013746$Норд$Actors\Character\Character Assets\skeleton.nif
+00000007$00013746$Норд$actors\Character\Character Assets Female\skeleton_female.nif
+00013298$00013745$Каджит$Actors\Character\Character Assets\skeletonBeast.nif
+00013298$00013745$Каджит$Actors\Character\Character Assets Female\skeletonBeast_female.nif
+0001325C$00013744$Имперец$Actors\Character\Character Assets\skeleton.nif
+0001325C$00013744$Имперец$actors\Character\Character Assets Female\skeleton_female.nif
+00013269$00013743$Высокий эльф$Actors\Character\Character Assets\skeleton.nif
+00013269$00013743$Высокий эльф$actors\Character\Character Assets Female\skeleton_female.nif
+0001334F$00013742$Темный эльф$Actors\Character\Character Assets\skeleton.nif
+0001334F$00013742$Темный эльф$actors\Character\Character Assets Female\skeleton_female.nif
+00013260$00013741$Бретонец$Actors\Character\Character Assets\skeleton.nif
+00013260$00013741$Бретонец$actors\Character\Character Assets Female\skeleton_female.nif
+00013268$00013740$Аргонианин$Actors\Character\Character Assets\skeletonBeast.nif
+00013268$00013740$Аргонианин$Actors\Character\Character Assets Female\skeletonBeast_female.nif
+00023ABE$0001320A$Волк$Actors\Canine\Character Assets Wolf\skeleton.nif
+0002C3C7$00013209$Мать-дымок$Actors\Witchlight\Character Assets\skeleton.nif
+00023ABD$00013208$Дымок$Actors\Wisp\Character Assets\skeleton.nif
+00023ABB$00013206$Снежный тролль$Actors\Troll\Character Assets\skeleton.nif
+00023ABA$00013205$Тролль$Actors\Troll\Character Assets\skeleton.nif
+00023AB9$00013204$Спригган$Actors\Spriggan\Character Assets\skeleton.nif
+00023AB8$00013203$Рыба-убийца$Actors\Slaughterfish\Character Assets\skeleton.nif
+00023AB6$00013202$Снежный саблезуб$Actors\SabreCat\Character Assets\Skeleton.nif
+00023AB7$00013201$Злокрыс$Actors\Skeever\Character Assets\skeleton.nif
+00023AB5$00013200$Саблезуб$Actors\SabreCat\Character Assets\Skeleton.nif
+0001C060$000131FF$Мамонт$Actors\Mammoth\Character Assets\skeleton.nif
+00023AB3$000131FE$Ледяное привидение$Actors\IceWraith\Character Assets\skeleton.nif
+00023AB2$000131FD$Лошадь$Actors\Horse\Character Assets\skeleton.nif
+00023AB1$000131FC$Horker$Actors\Horker\Character Assets\skeleton.nif
+0001B151$000131FB$Ворожея$Actors\Hagraven\Character Assets\skeleton.nif
+0001CB2C$000131FA$Коза$Actors\Goat\Character Assets\skeleton.nif
+0001F3BB$000131F9$Великан$Actors\Giant\Character Assets\skeleton.nif
+00023AAA$000131F8$Frostbite Spider$Actors\FrostbiteSpider\Character Assets\skeleton.nif
+000204C2$000131F7$Грозовой атронах$Actors\AtronachStorm\Character Assets\skeleton.nif
+00000EA6$000131F6$Ледяной атронах$Actors\AtronachFrost\Character Assets\skeleton.nif
+000204C0$000131F5$Огненный атронах$Actors\AtronachFlame\Character Assets\skeleton.nif
+0001A778$000131F4$Фалмер$Actors\Falmer\Character Assets\Skeleton.nif
+0001B14F$000131F3$Двемерский паук$Actors\DwarvenSpider\Character Assets\skeleton.nif
+0001B14D$000131F2$Двемерская сфера$Actors\DwarvenSphereCenturion\Character Assets\skeleton.nif
+0001B14E$000131F1$Двемерский центурион$Actors\DwarvenSteamCenturion\Character Assets\skeleton.nif
+00016EF0$000131F0$Dremora$Actors\Character\Character Assets\skeleton.nif
+00016EF0$000131F0$Dremora$actors\Character\Character Assets Female\skeleton_female.nif
+0002025A$000131EF$Dragon Priest$Actors\DragonPriest\Character Assets\skeleton.nif
+0001E62A$000131EE$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+00023A91$000131ED$Олень$Actors\Deer\Character Assets\Skeleton.nif
+000A5600$000131EB$Корус$Actors\Chaurus\Character Assets\skeleton.nif
+00023A8C$000131E9$Белый медведь$Actors\Bear\Character Assets\skeleton.nif
+00023A8B$000131E8$Пещерный медведь$Actors\Bear\Character Assets\skeleton.nif
+00023A8A$000131E7$Медведь$Actors\Bear\Character Assets\skeleton.nif
+0001CA03$00012E82$Dragon Race$Actors\Dragon\Character Assets\Skeleton.nif
+0001FB8F$00000D53$Драугр$Actors\Draugr\Character Assets\Skeleton.nif
+0001FB8F$00000D53$Драугр$Actors\Draugr\Character Assets\SkeletonF.nif
+00000EB4$00000019$Раса по умолчанию$Actors\Character\Character Assets\skeleton.nif
+00000EB4$00000019$Раса по умолчанию$actors\Character\Character Assets Female\skeleton_female.nif
+020023E3$020023E2$Драугр$Actors\Draugr\Character Assets\Skeleton.nif
+020023E3$020023E2$Драугр$Actors\Draugr\Character Assets\SkeletonF.nif
+0200EC1C$0200283A$Вампир-лорд$Actors\VampireLord\Character Assets\Skeleton.nif
+0200EBB1$02002AE0$Мать-дымок$Actors\Witchlight\Character Assets\skeleton.nif
+02002B44$0200377D$Высокий эльф$Actors\Character\Character Assets\skeleton.nif
+02002B44$0200377D$Высокий эльф$actors\Character\Character Assets Female\skeleton_female.nif
+0201AA74$02003D01$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+0201AA77$02003D02$Гончая смерти$Actors\Canine\Character Assets Wolf\skeleton.nif
+0201AA77$02003D02$Гончая смерти$Actors\Canine\Character Assets Dog\skeleton.nif
+020029A1$020051FB$Chaurusflyer$Actors\DLC01\ChaurusFlyer\Character Assets\skeleton.nif
+020029A1$020051FB$Chaurusflyer$Actors\Chaurus\Character Assets\skeleton.nif
+020045B7$02006AFA$Скелет$Actors\Draugr\Character Assets\Skeleton.nif
+020045B7$02006AFA$Скелет$Actors\Draugr\Character Assets\SkeletonF.nif
+020074F8$02007AF3$Драугр$Actors\Draugr\Character Assets\Skeleton.nif
+020074F8$02007AF3$Драугр$Actors\Draugr\Character Assets\SkeletonF.nif
+02004575$0200894D$Драугр$Actors\Draugr\Character Assets\Skeleton.nif
+02004575$0200894D$Драугр$Actors\Draugr\Character Assets\SkeletonF.nif
+0200A2CC$0200A2C6$Гаргулья$Actors\DLC01\VampireBrute\Character Assets\skeleton.nif
+0200A2CC$0200A2C6$Гаргулья$Actors\WerewolfBeast\Character Assets\skeleton.nif
+02004D88$0200C5F0$Собака$Actors\Canine\Character Assets Wolf\skeleton.nif
+02004D88$0200C5F0$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+02002C02$0200D0B2$Олень$Actors\Deer\Character Assets\Skeleton.nif
+02003C67$0200D0B6$Саблезуб$Actors\SabreCat\Character Assets\Skeleton.nif
+02010CFA$02010D00$Гаргулья$Actors\DLC01\VampireBrute\Character Assets\skeleton.nif
+02010CFA$02010D00$Гаргулья$Actors\WerewolfBeast\Character Assets\skeleton.nif
+020030D8$020117DE$Dragon Race$Actors\Dragon\Character Assets\Skeleton.nif
+0200D0B9$020117F4$Снежный тролль$Actors\Troll\Character Assets\skeleton.nif
+0200D0B8$020117F5$Тролль$Actors\Troll\Character Assets\skeleton.nif
+02013B74$02013B77$Спригган$Actors\Spriggan\Character Assets\skeleton.nif
+02006D06$02015136$Корус$Actors\Chaurus\Character Assets\skeleton.nif
+02015C45$02015C34$Мастер-кузнец$Actors\DwarvenSteamCenturion\Character Assets\skeleton.nif
+02018B30$02018B33$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+0200CEF3$02018B36$Собака$Actors\Canine\Character Assets Dog\skeleton.nif
+0200F4D6$02019D86$Гаргулья$Actors\DLC01\VampireBrute\Character Assets\skeleton.nif
+0200F4D6$02019D86$Гаргулья$Actors\WerewolfBeast\Character Assets\skeleton.nif
+020045B9$02019FD3$Скелет$Actors\Draugr\Character Assets\SkeletonS.nif
+020045B9$02019FD3$Скелет$Actors\Draugr\Character Assets\SkeletonF.nif
+02006D11$0201AACC$Фалмер$Actors\Falmer\Character Assets\Skeleton.nif
+0403CECC$0403CECB$Скелет$Actors\Draugr\Character Assets\Skeleton.nif
+0403CECC$0403CECB$Скелет$Actors\Draugr\Character Assets\SkeletonF.nif
+0401FB98$0403CA97$Норд$Actors\Character\Character Assets\skeleton.nif
+0401FB98$0403CA97$Норд$actors\Character\Character Assets Female\skeleton_female.nif
+0403BD0C$0403C35F$$Actors\DLC02\BoarRiekling\Character Assets\SkeletonBoar.nif
+040248E1$0403911A$Dragon Priest$Actors\DragonPriest\Character Assets\skeleton.nif
+0401EEB1$04035538$Dremora$Actors\Character\Character Assets\skeleton.nif
+0401EEB1$04035538$Dremora$actors\Character\Character Assets Female\skeleton_female.nif
+0402B019$0402B014$Dwarven Sphere$Actors\DLC02\DwarvenBallistaCenturion\Character Assets\skeleton.nif
+0402B019$0402B014$Dwarven Sphere$Actors\DwarvenSphereCenturion\Character Assets\skeleton.nif
+0402A6FE$0402A6FD$Draugr$Actors\Draugr\Character Assets\Skeleton.nif
+0402A6FE$0402A6FD$Draugr$Actors\Draugr\Character Assets\SkeletonF.nif
+040296BB$04029EFC$Witchlight$Actors\Witchlight\Character Assets\skeleton.nif
+04028246$04029EE7$Ice Wraith$Actors\IceWraith\Character Assets\skeleton.nif
+0402857F$04028580$Netch$Actors\DLC02\Netch\CharacterAssets\skeleton.nif
+040177B6$04027BFC$Storm Atronach$Actors\AtronachStorm\Character Assets\skeleton.nif
+040274A0$04027483$Frostbite Spider$Actors\FrostbiteSpider\Character Assets\skeleton.nif
+0401F189$04024038$$Actors\DLC02\BoarRiekling\Character Assets\SkeletonBoar.nif
+0401B649$0401FEB8$Netch$Actors\DLC02\Netch\CharacterAssets\skeleton.nif
+0401F990$0401F98F$Spectral Dragon$Actors\IceWraith\Character Assets\skeleton.nif
+040322B1$0401E17B$Werewolf$Actors\WerewolfBeast\Character Assets\skeleton.nif
+0401DCBA$0401DCB9$HMDaedra$Actors\DLC02\HMDaedra\Character Assets\Skeleton.nif
+0401DCBA$0401DCB9$HMDaedra$Actors\Giant\Character Assets\skeleton.nif
+04019665$0401CAD8$Ghost Giant$Actors\Giant\Character Assets\skeleton.nif
+04019AD0$0401B658$Scrib$Actors\DLC02\Scrib\Character Assets\skeleton.nif
+04019AD0$0401B658$Scrib$Actors\Skeever\Character Assets\skeleton.nif
+0401B63F$0401B644$Spriggan$Actors\Spriggan\Character Assets\skeleton.nif
+0401B636$0401B637$Draugr$Actors\Draugr\Character Assets\Skeleton.nif
+0401B636$0401B637$Draugr$Actors\Draugr\Character Assets\SkeletonF.nif
+04017F47$04017F44$$Actors\DLC02\Riekling\Character Assets\skeleton.nif
+040179D1$040179CF$$Actors\DLC02\BoarRiekling\Character Assets\skeleton.nif
+04014494$04014495$Lurker$Actors\DLC02\BenthicLurker\Character Assets\skeleton.nif
+04014494$04014495$Lurker$Actors\Giant\Character Assets\skeleton.nif
+04014447$04014449$Frostbite Spider$Actors\FrostbiteSpider\Character Assets\skeleton.nif
+000F4999$0E002800$Skeleton$Actors\Character\Character Assets\skeleton.nif
+000F4999$0E002800$Skeleton$actors\Character\Character Assets Female\skeleton_female.nif

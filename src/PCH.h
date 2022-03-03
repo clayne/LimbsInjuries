@@ -1,10 +1,12 @@
 #pragma once
 
+#define DEBUG
+
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"
 
 #pragma warning(push)
-#ifdef NDEBUG
+#ifdef DEBUG
 #	include <spdlog/sinks/basic_file_sink.h>
 #else
 #	include <spdlog/sinks/msvc_sink.h>
@@ -18,3 +20,5 @@ namespace logger = SKSE::log;
 #define DLLEXPORT __declspec(dllexport)
 
 #include "Version.h"
+#include "AutoTOML.hpp"
+#include "Util.h"

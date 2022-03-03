@@ -1,6 +1,11 @@
+#include "spdlog/sinks/basic_file_sink.h"
+#include <Hooks.h>
+#include "Events.h"
+#include <Injuries.h>
+
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
-#ifndef NDEBUG
+#ifndef DEBUG
 	auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
 #else
 	auto path = logger::log_directory();
@@ -15,11 +20,11 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 
 	auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
 
-#ifndef NDEBUG
+#ifndef DEBUG
 	log->set_level(spdlog::level::trace);
 #else
 	log->set_level(spdlog::level::info);
-	log->flush_on(spdlog::level::warn);
+	log->flush_on(spdlog::level::info);
 #endif
 
 	spdlog::set_default_logger(std::move(log));
@@ -50,6 +55,8 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	logger::info("loaded");
 
 	SKSE::Init(a_skse);
+	Hooks::apply_hooks();
+	EventHandler::Register();
 
 	return true;
 }
