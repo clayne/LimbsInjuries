@@ -1,4 +1,5 @@
 #include <Injuries.h>
+#include "SoundPlayer.h"
 
 namespace Injuries
 {
@@ -107,6 +108,7 @@ namespace Injuries
 	void apply_head_injury(RE::Actor* victim, RE::Actor* attacker)
 	{
 		debug_notification(victim, attacker, LimbsInjuriesESP::get_Msg_Head());
+		Sounds::play_sound(victim, Sounds::SoundTypes::InjuHead);
 
 		damageav(victim, RE::ACTOR_VALUE_MODIFIERS::kDamage, RE::ActorValue::kMagicka, -1000000.0f, attacker);
 
@@ -121,6 +123,7 @@ namespace Injuries
 	void apply_body_injury(RE::Actor* victim, RE::Actor* attacker)
 	{
 		debug_notification(victim, attacker, LimbsInjuriesESP::get_Msg_Chest());
+		Sounds::play_sound(victim, Sounds::SoundTypes::InjuBody);
 
 		damageav(victim, RE::ACTOR_VALUE_MODIFIERS::kDamage, RE::ActorValue::kStamina, -1000000000.0f, attacker);
 
@@ -138,6 +141,7 @@ namespace Injuries
 	void apply_arms_injury(RE::Actor* victim, RE::Actor* attacker)
 	{
 		debug_notification(victim, attacker, LimbsInjuriesESP::get_Msg_Arms());
+		Sounds::play_sound(victim, Sounds::SoundTypes::InjuArms);
 
 		unequip_weapons(victim);
 
@@ -147,6 +151,7 @@ namespace Injuries
 	void apply_legs_injury(RE::Actor* victim, RE::Actor* attacker)
 	{
 		debug_notification(victim, attacker, LimbsInjuriesESP::get_Msg_Legs());
+		Sounds::play_sound(victim, Sounds::SoundTypes::InjuLegs);
 
 		stagger<1.0f>(victim, attacker);
 

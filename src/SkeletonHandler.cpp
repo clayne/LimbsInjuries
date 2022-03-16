@@ -3,6 +3,7 @@
 #include "WeaponHandler.h"
 #include "Injuries.h"
 #include "DebugAPI.h"
+#include "SoundPlayer.h"
 
 using RE::NiPoint3;
 
@@ -1566,60 +1567,6 @@ Skeletons get_skeleton_type(RE::Actor* a)
 	return get_skeleton_type(get_skeleton_path(a));
 }
 
-namespace Sounds
-{
-	void* BSAudioManager__GetSingleton()
-	{
-		using func_t = decltype(&BSAudioManager__GetSingleton);
-		REL::Relocation<func_t> func{ RE::Offset::BSAudioManager::GetSingleton };
-		return func();
-	}
-
-	int PlaySound_func1_140BEEE70(void* manager, RE::BSSoundHandle* a2, int a3, int a4)
-	{
-		using func_t = decltype(&PlaySound_func1_140BEEE70);
-		REL::Relocation<func_t> func{ REL::ID(66401) };
-		return func(manager, a2, a3, a4);
-	}
-
-	char set_sound_position(RE::BSSoundHandle* a1, float x, float y, float z)
-	{
-		using func_t = decltype(&set_sound_position);
-		REL::Relocation<func_t> func{ REL::ID(66370) };
-		return func(a1, x, y, z);
-	}
-
-	void PlaySound_func3_140BEDB10(RE::BSSoundHandle* a1, RE::NiAVObject* source_node)
-	{
-		using func_t = decltype(&PlaySound_func3_140BEDB10);
-		REL::Relocation<func_t> func{ REL::ID(66375) };
-		return func(a1, source_node);
-	}
-
-	char __fastcall PlaySound_func4_140BEDB10(RE::BSSoundHandle* a1)
-	{
-		using func_t = decltype(&PlaySound_func4_140BEDB10);
-		REL::Relocation<func_t> func{ REL::ID(66355) };
-		return func(a1);
-	}
-
-	void play_sound(RE::Actor* a, int formid)
-	{
-		RE::BSSoundHandle handle;
-		handle.soundID = static_cast<uint32_t>(-1);
-		handle.assumeSuccess = false;
-		*(uint32_t*)&handle.state = 0;
-
-		auto manager = BSAudioManager__GetSingleton();
-		PlaySound_func1_140BEEE70(manager, &handle, formid, 16);
-		if (set_sound_position(&handle, a->data.location.x, a->data.location.y, a->data.location.z)) {
-			PlaySound_func3_140BEDB10(&handle, a->Get3D());
-			PlaySound_func4_140BEDB10(&handle);
-		}
-	}
-}
-using Sounds::play_sound;
-
 void get_attacker_thing_melee(RE::Actor* attacker, NiPoint3& hit_pos, NiPoint3& eye_pos)
 {
 	float reach = PlayerCharacter__get_reach(attacker) * 0.75f;
@@ -1700,7 +1647,6 @@ void try_injury(Limbs limb, float damage_mult, RE::Actor* victim, RE::Actor* att
 #endif
 
 	if (random(get_injury_prop(damage_mult))) {
-		// TODO: play sound, probably FX
 
 #ifdef DEBUG
 		logger::info("DONE");
@@ -1710,15 +1656,13 @@ void try_injury(Limbs limb, float damage_mult, RE::Actor* victim, RE::Actor* att
 	}
 }
 
-bool try_penetrate(float damage_mult, float attack)
+bool try_penetrate(float discount, float attack)
 {
 #ifdef DEBUG
-	logger::info("try penetrate, prop = {}", get_penetraion_prop(damage_mult, attack));
+	logger::info("try penetrate, prop = {}", get_penetraion_prop(discount, attack));
 #endif
 
-	if (!random(get_penetraion_prop(damage_mult, attack))) {
-	//if (true) {
-		// TODO: play sound, probably FX
+	if (!random(get_penetraion_prop(discount, attack))) {
 
 #ifdef DEBUG
 		logger::info("LOX");
@@ -1756,6 +1700,45 @@ void test_skeletons()
 	}
 }
 
+char Character__get_weapon_vector_625DD0(RE::Actor* a, char left, RE::NiPoint3* P)
+{
+	using func_t = decltype(&Character__get_weapon_vector_625DD0);
+	REL::Relocation<func_t> func{ REL::ID(37620) };
+	return func(a, left, P);
+}
+
+RE::NiPoint3 TransformVectorByMatrix(const RE::NiPoint3& a_vector, const RE::NiMatrix3& a_matrix)
+{
+	return RE::NiPoint3(a_matrix.entry[0][0] * a_vector.x + a_matrix.entry[0][1] * a_vector.y + a_matrix.entry[0][2] * a_vector.z,
+		a_matrix.entry[1][0] * a_vector.x + a_matrix.entry[1][1] * a_vector.y + a_matrix.entry[1][2] * a_vector.z,
+		a_matrix.entry[2][0] * a_vector.x + a_matrix.entry[2][1] * a_vector.y + a_matrix.entry[2][2] * a_vector.z);
+}
+
+void draw_player_weapon(float )
+{
+	//NiPoint3 tmp;
+	auto a = RE::PlayerCharacter::GetSingleton();
+	float reach = PlayerCharacter__get_reach(a) * 0.75f;
+	//Character__get_weapon_vector_625DD0(attacker, false, &tmp);
+	//draw_line<GRN>(eye_pos, eye_pos + tmp * reach);
+	auto root = netimmerse_cast<RE::BSFadeNode*>(a->Get3D());
+	if (!root)
+		return;
+	auto bone = netimmerse_cast<RE::NiNode*>(root->GetObjectByName("WEAPON"));
+	if (!bone)
+		return;
+	RE::NiPoint3 startPos = bone->world.translate;
+	auto weaponDirection = TransformVectorByMatrix({ 0.0f, 1.0f, 0.0f }, bone->world.rotate);
+	RE::NiPoint3 endPos = startPos + weaponDirection * reach;
+	//draw_line<BLU, 100>(startPos, endPos);
+	auto hud = DebugAPI::GetHUD();
+	if (!hud || !hud->uiMovie)
+		return;
+	glm::vec3 from = { startPos.x, startPos.y, startPos.z };
+	glm::vec3 to = { endPos.x, endPos.y, endPos.z };
+	DebugAPI::DrawLine3D(hud->uiMovie, from, to, BLU, 5.0f);
+}
+
 float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* victim, RE::Actor* attacker)
 {
 #ifdef DEBUG
@@ -1782,6 +1765,7 @@ float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* v
 
 #ifdef DEBUG
 	draw_line<RED>(eye_pos, hit_pos);
+	draw_player_weapon(1000.0f);
 #endif
 
 	//logger::info("here3");
@@ -1796,24 +1780,26 @@ float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* v
 
 	//logger::info("here5");
 
-	float damage_mult = get_discount(attack, avg_armor);
+	float discount = get_discount(attack, avg_armor);
 
 	//logger::info("here6");
 
 #ifdef DEBUG
-	logger::info("attack = {}, avg_armor = {}, damage_mult = {}, ans = {}", attack, avg_armor, damage_mult, DamageResist + damage_mult);
+	logger::info("attack = {}, avg_armor = {}, discount = {}, ans = {}", attack, avg_armor, discount, DamageResist + discount);
 #endif
 
-	if (!try_penetrate(damage_mult, attack))
+	if (!try_penetrate(discount, attack)) {
+		Sounds::play_sound_nopen_melee(attacker, victim);
 		return -1.0f;
+	}
 
-	try_injury(std::get<3>(bones[min_dist_ind]), damage_mult, victim, attacker);
+	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker);
 
 #ifdef DEBUG
 	apply_injury(Limbs::Arms, victim, attacker);
 #endif
 
-	return DamageResist + damage_mult;
+	return DamageResist + discount;
 }
 
 void get_attacker_thing_proj(RE::Projectile* proj, NiPoint3& hit_pos, NiPoint3& eye_pos)
@@ -1847,22 +1833,23 @@ float LocationalDamage_proj(float ArmorRating, float DamageResist, RE::Actor* vi
 	float avg_armor = locational_data.second;
 	auto min_dist_ind = locational_data.first;
 
-	float damage_mult = get_discount(attack, avg_armor);
+	float discount = get_discount(attack, avg_armor);
 
 #ifdef DEBUG
-	logger::info("attack = {}, avg_armor = {}, damage_mult = {}, ans = {}", attack, avg_armor, damage_mult, DamageResist + damage_mult);
+	logger::info("attack = {}, avg_armor = {}, discount = {}, ans = {}", attack, avg_armor, discount, DamageResist + discount);
 #endif
 
-	if (!try_penetrate(damage_mult, attack)) {
+	if (!try_penetrate(discount, attack)) {
 		proj->impactResult = RE::ImpactResult::kBounce;
+		Sounds::play_sound_nopen_arrow(attacker, victim);
 		return -1.0f;
 	}
 
-	try_injury(std::get<3>(bones[min_dist_ind]), damage_mult, victim, attacker);
+	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker);
 
 #ifdef DEBUG
-	//apply_injury(Limbs::Legs, victim, attacker);
+	apply_injury(Limbs::Legs, victim, attacker);
 #endif
 
-	return DamageResist + damage_mult;
+	return DamageResist + discount;
 }

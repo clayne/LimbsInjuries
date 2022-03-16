@@ -77,16 +77,17 @@ float get_discount(float attack, float defence)
 	return std::min(1.0f, std::max(0.0f, a * attack + b * defence + c));
 }
 
-float get_penetraion_prop(float damage_mult, float attack)
+float get_penetraion_prop(float discount, float attack)
 {
-	return std::min(1.0f, std::max(0.0f, (1.0f - damage_mult) + attack / 100.0f));
+	return std::min(1.0f, std::max(0.0f, (1.0f - discount) + attack / 100.0f));
 }
 
-float get_injury_prop(float damage_mult)
+float get_injury_prop(float discount)
 {
-	if (damage_mult >= 0.25f)
+	const float a = 0.7f, b = 0.75f;
+	if (discount >= b)
 		return 0.0f;
-	return 0.5f - damage_mult;
+	return std::max(0.0f, std::min(1.0f, a * (b - discount) * (b - discount)));
 }
 
 static float get_armor__1401D7330(RE::InventoryEntryData* item, float armorPerks, float ArmorRating)

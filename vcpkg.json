@@ -11,6 +11,7 @@
     "xbyak",
     "span-lite",
     "spdlog",
+    "rsm-binary-io",
     "glm"
   ],
   "builtin-baseline":"bba8794b82a0f44b8709f294850a2c8e96b61415",

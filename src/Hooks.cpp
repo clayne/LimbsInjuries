@@ -9,6 +9,8 @@ namespace Hooks
 		_Update(a_this, a2);
 
 		DebugAPI::Update();
+
+		draw_player_weapon(a2);
 	}
 
 	void Character_ProcessEvent(RE::BSAnimationGraphEvent* a_event)

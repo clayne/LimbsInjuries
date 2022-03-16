@@ -17,7 +17,6 @@ set_from_environment(VCPKG_ROOT)
 
 if (DEFINED VCPKG_ROOT)
 	set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-  set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_SOURCE_DIR}/ports" CACHE STRING "")
 	set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
 else ()
 	message(
@@ -106,6 +105,8 @@ set(SOURCES
   src/Events.cpp
   src/Injuries.h
   src/Injuries.cpp
+  src/SoundPlayer.h
+  src/SoundPlayer.cpp
 )
 
 source_group(
