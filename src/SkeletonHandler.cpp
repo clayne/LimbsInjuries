@@ -4,6 +4,7 @@
 #include "Injuries.h"
 #include "DebugAPI.h"
 #include "SoundPlayer.h"
+#include <UselessFenixUtils.h>
 
 using RE::NiPoint3;
 
@@ -1467,6 +1468,22 @@ bool isHumanoid(RE::Actor* a, Skeletons type)
 	return ans;
 }
 
+void play_impact(RE::Actor* a, const char* bone_name, RE::BGSImpactData* impact)
+{
+	auto root = netimmerse_cast<RE::BSFadeNode*>(a->Get3D());
+	if (!root)
+		return;
+	auto bone = netimmerse_cast<RE::NiNode*>(root->GetObjectByName(bone_name));
+	if (!bone)
+		return;
+
+	RE::NiPoint3 from = bone->world.translate;
+	RE::NiPoint3 P_V = { 0.0f, 0.0f, 0.0f };
+
+	// TODO: cache impact
+	FenixUtils::play_impact(a, impact, &P_V, &from, bone);
+}
+
 Skeletons get_skeleton_type(const RE::BSFixedString& path)
 {
 	switch (hash_lowercase(path.data(), path.size())) {
@@ -1567,19 +1584,6 @@ Skeletons get_skeleton_type(RE::Actor* a)
 	return get_skeleton_type(get_skeleton_path(a));
 }
 
-void get_attacker_thing_melee(RE::Actor* attacker, NiPoint3& hit_pos, NiPoint3& eye_pos)
-{
-	float reach = PlayerCharacter__get_reach(attacker) * 0.75f;
-	Actor__get_eye_pos(attacker, &hit_pos, 1);
-	eye_pos = hit_pos;
-	if (attacker->IsPlayerRef()) {
-		hit_pos += rotate(reach, attacker->data.angle);
-	} else {
-		hit_pos += (attacker->data.location - hit_pos) * 0.25f;
-		hit_pos += rotateZ(reach, attacker->data.angle);
-	}
-}
-
 std::pair<uint32_t, float> get_LocationalArmor(RE::Actor* victim, Skeletons type, const NiPoint3& hit_pos, const NiPoint3& eye_pos)
 {
 	auto& bones = Bones[type];
@@ -1640,18 +1644,19 @@ std::pair<uint32_t, float> get_LocationalArmor(RE::Actor* victim, Skeletons type
 	return { min_dist_ind, avg_armor };
 }
 
-void try_injury(Limbs limb, float damage_mult, RE::Actor* victim, RE::Actor* attacker)
+void try_injury(Limbs limb, float damage_mult, RE::Actor* victim, RE::Actor* attacker, const char* node_name)
 {
 #ifdef DEBUG
 	logger::info("try injury {}, prop = {}", limb, get_injury_prop(damage_mult));
 #endif
 
-	if (random(get_injury_prop(damage_mult))) {
+	if (FenixUtils::random(get_injury_prop(damage_mult))) {
 
 #ifdef DEBUG
 		logger::info("DONE");
 #endif
 
+		play_impact(victim, node_name, RE::TESForm::LookupByID<RE::BGSImpactData>(0x000FFF4A));
 		apply_injury(limb, victim, attacker);
 	}
 }
@@ -1659,10 +1664,10 @@ void try_injury(Limbs limb, float damage_mult, RE::Actor* victim, RE::Actor* att
 bool try_penetrate(float discount, float attack)
 {
 #ifdef DEBUG
-	logger::info("try penetrate, prop = {}", get_penetraion_prop(discount, attack));
+	logger::info("try penetrate, prop = {}", get_penetration_prop(discount, attack));
 #endif
 
-	if (!random(get_penetraion_prop(discount, attack))) {
+	if (!FenixUtils::random(get_penetration_prop(discount, attack))) {
 
 #ifdef DEBUG
 		logger::info("LOX");
@@ -1718,7 +1723,7 @@ void draw_player_weapon(float )
 {
 	//NiPoint3 tmp;
 	auto a = RE::PlayerCharacter::GetSingleton();
-	float reach = PlayerCharacter__get_reach(a) * 0.75f;
+	float reach = FenixUtils::PlayerCharacter__get_reach(a) * 0.75f;
 	//Character__get_weapon_vector_625DD0(attacker, false, &tmp);
 	//draw_line<GRN>(eye_pos, eye_pos + tmp * reach);
 	auto root = netimmerse_cast<RE::BSFadeNode*>(a->Get3D());
@@ -1737,6 +1742,19 @@ void draw_player_weapon(float )
 	glm::vec3 from = { startPos.x, startPos.y, startPos.z };
 	glm::vec3 to = { endPos.x, endPos.y, endPos.z };
 	DebugAPI::DrawLine3D(hud->uiMovie, from, to, BLU, 5.0f);
+}
+
+void get_attacker_thing_melee(RE::Actor* attacker, NiPoint3& hit_pos, NiPoint3& eye_pos)
+{
+	float reach = FenixUtils::PlayerCharacter__get_reach(attacker) * 0.75f;
+	FenixUtils::Actor__get_eye_pos(attacker, &hit_pos, 1);
+	eye_pos = hit_pos;
+	if (attacker->IsPlayerRef()) {
+		hit_pos += rotate(reach, attacker->data.angle);
+	} else {
+		hit_pos += (attacker->data.location - hit_pos) * 0.25f;
+		hit_pos += rotateZ(reach, attacker->data.angle);
+	}
 }
 
 float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* victim, RE::Actor* attacker)
@@ -1765,7 +1783,7 @@ float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* v
 
 #ifdef DEBUG
 	draw_line<RED>(eye_pos, hit_pos);
-	draw_player_weapon(1000.0f);
+	draw_player_weapon(3000.0f);
 #endif
 
 	//logger::info("here3");
@@ -1788,15 +1806,21 @@ float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* v
 	logger::info("attack = {}, avg_armor = {}, discount = {}, ans = {}", attack, avg_armor, discount, DamageResist + discount);
 #endif
 
+	const char* node_name = NodeNames[type][std::get<1>(bones[min_dist_ind])];
+
 	if (!try_penetrate(discount, attack)) {
+	//if (true) {
 		Sounds::play_sound_nopen_melee(attacker, victim);
+		play_impact(victim, node_name, RE::TESForm::LookupByID<RE::BGSImpactData>(0x0004BB52));
 		return -1.0f;
 	}
 
-	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker);
+	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker, node_name);
 
 #ifdef DEBUG
-	apply_injury(Limbs::Arms, victim, attacker);
+	//apply_injury(Limbs::Arms, victim, attacker);
+	//play_impact(victim, NodeNames[type][std::get<1>(bones[min_dist_ind])], RE::TESForm::LookupByID<RE::BGSImpactData>(0x000D309E));
+	//SKSE::GetTaskInterface()->AddTask([attacker]() { play_impact(attacker); });
 #endif
 
 	return DamageResist + discount;
@@ -1839,16 +1863,20 @@ float LocationalDamage_proj(float ArmorRating, float DamageResist, RE::Actor* vi
 	logger::info("attack = {}, avg_armor = {}, discount = {}, ans = {}", attack, avg_armor, discount, DamageResist + discount);
 #endif
 
+	const char* node_name = NodeNames[type][std::get<1>(bones[min_dist_ind])];
+
 	if (!try_penetrate(discount, attack)) {
+	//if (true) {
 		proj->impactResult = RE::ImpactResult::kBounce;
 		Sounds::play_sound_nopen_arrow(attacker, victim);
+		play_impact(victim, node_name, RE::TESForm::LookupByID<RE::BGSImpactData>(0x0004BB52));
 		return -1.0f;
 	}
 
-	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker);
+	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker, node_name);
 
 #ifdef DEBUG
-	apply_injury(Limbs::Legs, victim, attacker);
+	//apply_injury(Limbs::Legs, victim, attacker);
 #endif
 
 	return DamageResist + discount;

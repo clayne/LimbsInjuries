@@ -10,7 +10,12 @@ namespace Hooks
 
 		DebugAPI::Update();
 
+#ifdef DEBUG
+
 		draw_player_weapon(a2);
+
+#endif  // DEBUG
+
 	}
 
 	void Character_ProcessEvent(RE::BSAnimationGraphEvent* a_event)
@@ -180,35 +185,104 @@ namespace Hooks
 	}
 
 	void apply_NoPenetration() {
-		// SkyrimSE.exe+743AFB
-		constexpr REL::ID funcOffset = REL::ID(42842);
-		uintptr_t ret_addr_clear = funcOffset.address() + 0x5EB;
-
-		// SkyrimSE.exe+743B13
-		uintptr_t ret_addr_noclear = funcOffset.address() + 0x603;
-
-		struct Code : Xbyak::CodeGenerator
 		{
-			Code(uintptr_t ret_addr_clear, uintptr_t ret_addr_noclear)
+			// set damage to 0
+
+			// SkyrimSE.exe+743AFB
+			constexpr REL::ID funcOffset = REL::ID(42842);
+			uintptr_t ret_addr_clear = funcOffset.address() + 0x5EB;
+
+			// SkyrimSE.exe+743B13
+			uintptr_t ret_addr_noclear = funcOffset.address() + 0x603;
+
+			struct Code : Xbyak::CodeGenerator
 			{
-				Xbyak::Label L__clear;
+				Code(uintptr_t ret_addr_clear, uintptr_t ret_addr_noclear)
+				{
+					Xbyak::Label L__clear;
 
-				call(qword[rax + 0x20]);
-				test(al, al);
-				jnz(L__clear);
-				mov(eax, 0xBF800000);
-				cmp(dword[rsp + 0x120], eax);
-				je(L__clear);
+					call(qword[rax + 0x20]);
+					test(al, al);
+					jnz(L__clear);
+					mov(eax, 0xBF800000);
+					cmp(dword[rsp + 0x120], eax);
+					je(L__clear);
 
-				mov(rax, ret_addr_noclear);
-				jmp(rax);
+					mov(rax, ret_addr_noclear);
+					jmp(rax);
 
-				L(L__clear);
-				mov(rax, ret_addr_clear);
-				jmp(rax);
-			}
-		} xbyakCode{ ret_addr_clear, ret_addr_noclear };
-		add_trampoline<5, 42842, 0x5E4>(&xbyakCode);  // SkyrimSE.exe+743AF4
+					L(L__clear);
+					mov(rax, ret_addr_clear);
+					jmp(rax);
+				}
+			} xbyakCode{ ret_addr_clear, ret_addr_noclear };
+			add_trampoline<5, 42842, 0x5E4>(&xbyakCode);  // SkyrimSE.exe+743AF4
+		}
+		{
+			// dont play impact when damage 0
+
+			// SkyrimSE.exe+628FD8
+			uintptr_t ret_addr_call = REL::ID(37673).address() + 0x3b8;
+
+			// SkyrimSE.exe+629001
+			uintptr_t ret_addr_nocall = REL::ID(37673).address() + 0x3e1;
+
+			struct Code : Xbyak::CodeGenerator
+			{
+				Code(uintptr_t ret_addr_call, uintptr_t ret_addr_nocall)
+				{
+					Xbyak::Label L__nocall;
+
+					test(r13b, r13b);
+					jnz(L__nocall);
+
+					cmp(dword[rsp + 0x108 - 0xC8 + 0x50], 0);
+					jz(L__nocall);
+
+					mov(rax, ret_addr_call);
+					jmp(rax);
+
+					L(L__nocall);
+					mov(rax, ret_addr_nocall);
+					jmp(rax);
+				}
+			} xbyakCode{ ret_addr_call, ret_addr_nocall };
+
+			add_trampoline<5, 37673, 0x3b3>(&xbyakCode);  // SkyrimSE.exe+628FD3
+		}
+		{
+			// dont play sound when damage 0
+
+			// SkyrimSE.exe+628FAA
+			uintptr_t ret_addr_call = REL::ID(37673).address() + 0x38a;
+
+			// SkyrimSE.exe+628FD3
+			uintptr_t ret_addr_nocall = REL::ID(37673).address() + 0x3b3;
+
+			struct Code : Xbyak::CodeGenerator
+			{
+				Code(uintptr_t ret_addr_call, uintptr_t ret_addr_nocall)
+				{
+					Xbyak::Label L__nocall;
+
+					shr(eax, 0x0E);
+					test(al, 1);
+					jnz(L__nocall);
+
+					cmp(dword[rsp + 0x108 - 0xC8 + 0x50], 0);
+					jz(L__nocall);
+
+					mov(rax, ret_addr_call);
+					jmp(rax);
+
+					L(L__nocall);
+					mov(rax, ret_addr_nocall);
+					jmp(rax);
+				}
+			} xbyakCode{ ret_addr_call, ret_addr_nocall };
+
+			add_trampoline<5, 37673, 0x383>(&xbyakCode);  // SkyrimSE.exe+628FA3
+		}
 	}
 
 	void apply_hooks()

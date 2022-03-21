@@ -3,66 +3,9 @@
 #include "DebugAPI.h"
 #include "RE/RTTI.h"
 
-/// <summary>
-/// random less than prop
-/// </summary>
-bool random(float prop)
-{
-	if (prop <= 0.0f)
-		return false;
-	if (prop >= 1.0f)
-		return true;
-
-	float random = ((float)rand()) / (float)RAND_MAX;
-	return random <= prop;
-}
-
-void damageav(RE::Actor* victim, RE::ACTOR_VALUE_MODIFIERS::ACTOR_VALUE_MODIFIER i1, RE::ActorValue i2, float val, RE::Actor* attacker)
-{
-	using func_t = decltype(&damageav);
-	REL::Relocation<func_t> func{ REL::ID(37523) };
-	return func(victim, i1, i2, val, attacker);
-}
-
-RE::TESObjectWEAP* get_UnarmedWeap()
-{
-	constexpr REL::ID UnarmedWeap(static_cast<std::uint64_t>(514923));
-	REL::Relocation<RE::NiPointer<RE::TESObjectWEAP>*> singleton{ UnarmedWeap };
-	return singleton->get();
-}
-
-bool PlayIdle(RE::AIProcess* proc, RE::Actor* attacker, RE::DEFAULT_OBJECT smth, RE::TESIdleForm* idle, bool a5, bool a6, RE::Actor* target)
-{
-	using func_t = decltype(&PlayIdle);
-	REL::Relocation<func_t> func{ REL::ID(38290) };
-	return func(proc, attacker, smth, idle, a5, a6, target);
-}
-
 inline float radToDeg(float a_radians)
 {
 	return a_radians * (180.0f / RE::NI_PI);
-}
-
-float GetHeadingAngle(RE::TESObjectREFR* a, const RE::NiPoint3& a_pos, bool a_abs)
-{
-	float theta = RE::NiFastATan2(a_pos.x - a->GetPositionX(), a_pos.y - a->GetPositionY());
-	float heading = radToDeg(theta - a->GetAngleZ());
-
-	if (heading < -180.0f) {
-		heading += 360.0f;
-	}
-
-	if (heading > 180.0f) {
-		heading -= 360.0f;
-	}
-
-	return a_abs ? RE::NiAbs(heading) : heading;
-}
-
-void UnequipItem(RE::Actor* a, RE::TESBoundObject* item)
-{
-	auto manager = RE::ActorEquipManager::GetSingleton();
-	manager->UnequipObject(a, item);
 }
 
 void Actor__DoCombatSpellApply_1406282E0(RE::Actor* caster, RE::SpellItem* spell, RE::Actor* target)
@@ -70,41 +13,6 @@ void Actor__DoCombatSpellApply_1406282E0(RE::Actor* caster, RE::SpellItem* spell
 	using func_t = decltype(&Actor__DoCombatSpellApply_1406282E0);
 	REL::Relocation<func_t> func{ REL::ID(37666) };
 	return func(caster, spell, target);
-}
-
-void PushActorAway_14067D4A0(RE::AIProcess* proc, RE::Actor* target, RE::NiPoint3* AggressorPos, float KnockDown)
-{
-	using func_t = decltype(&PushActorAway_14067D4A0);
-	REL::Relocation<func_t> func{ REL::ID(38858) };
-	return func(proc, target, AggressorPos, KnockDown);
-}
-
-void knock(RE::Actor* target, RE::Actor* aggressor, float KnockDown)
-{
-	if (target->currentProcess)
-		PushActorAway_14067D4A0(target->currentProcess, target, &aggressor->data.location, KnockDown);
-}
-
-void cast_spell(RE::Actor* victim, RE::Actor* attacker, RE::SpellItem* spell)
-{
-	RE::MagicCaster* caster = attacker->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
-	if (caster && spell) {
-		caster->InstantCast(spell, false, victim, 1.0f, false, 0.0f, attacker);
-	}
-}
-
-float PlayerCharacter__get_reach(RE::Actor* a)
-{
-	using func_t = decltype(&PlayerCharacter__get_reach);
-	REL::Relocation<func_t> func{ REL::ID(37588) };
-	return func(a);
-}
-
-RE::NiPoint3* Actor__get_eye_pos(RE::Actor* me, RE::NiPoint3* ans, int mb_type)
-{
-	using func_t = decltype(&Actor__get_eye_pos);
-	REL::Relocation<func_t> func{ REL::ID(36755) };
-	return func(me, ans, mb_type);
 }
 
 

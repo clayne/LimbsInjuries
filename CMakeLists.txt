@@ -79,7 +79,8 @@ set(Boost_USE_STATIC_LIBS ON)
 
 # ---- Dependencies ----
 
-add_subdirectory($ENV{CommonLibSSE} $ENV{CommonLibSSE}/build)
+#add_subdirectory($ENV{CommonLibSSE} $ENV{CommonLibSSE}/build)
+add_subdirectory($ENV{UselessFenixUtils} $ENV{UselessFenixUtils}/build)
 
 find_package(spdlog REQUIRED CONFIG)
 find_package(AutoTOML REQUIRED CONFIG)
@@ -107,6 +108,7 @@ set(SOURCES
   src/Injuries.cpp
   src/SoundPlayer.h
   src/SoundPlayer.cpp
+  src/Settings.h
 )
 
 source_group(
@@ -152,6 +154,7 @@ target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
 		CommonLibSSE::CommonLibSSE
+		UselessFenixUtils::UselessFenixUtils
 		spdlog::spdlog
 )
 

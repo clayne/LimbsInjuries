@@ -1,4 +1,6 @@
 #include "WeaponHandler.h"
+#include "Settings.h"
+#include <UselessFenixUtils.h>
 
 constexpr RE::FormID ArmorMaterialHide = 0x0006BBDD;
 constexpr RE::FormID ArmorMaterialStormcloak = 0x000AC13A;
@@ -48,17 +50,6 @@ constexpr RE::FormID DLC2WeaponMaterialStalhrim = 0x0402622F;
 constexpr RE::FormID WeapMaterialEbony = 0x0001E71E;
 constexpr RE::FormID WeapMaterialDaedric = 0x0001E71F;
 
-float get_penetration_prop(float attack, float defence)
-{
-	float ans = attack - defence;
-	ans = ans * 0.5f;
-	if (ans < 0.0f)
-		ans = 0.0f;
-	if (ans > 1.0f)
-		ans = 1.0f;
-	return ans;
-}
-
 bool is_human(RE::Actor* a)
 {
 	auto race = a->GetRace();
@@ -73,21 +64,24 @@ bool is_human(RE::Actor* a)
 
 float get_discount(float attack, float defence)
 {
-	float a = -0.01428571429f, b = 0.01666666667f, c = -0.7f;
-	return std::min(1.0f, std::max(0.0f, a * attack + b * defence + c));
+	float a = -0.007142857143f, b = 0.01666666667f, c = -0.7f;
+	float ans = a * attack + b * defence + c;
+	return FenixUtils::clamp01(ans * static_cast<float>(*Settings::BlockedMult));
 }
 
-float get_penetraion_prop(float discount, float attack)
+float get_penetration_prop(float discount, float attack)
 {
-	return std::min(1.0f, std::max(0.0f, (1.0f - discount) + attack / 100.0f));
+	float ans = (1.0f - discount) + attack / 100.0f;
+	return FenixUtils::clamp01(ans * static_cast<float>(*Settings::PenMult));
 }
 
 float get_injury_prop(float discount)
 {
-	const float a = 0.7f, b = 0.75f;
+	float a = 0.3f, b = 0.9f;
 	if (discount >= b)
 		return 0.0f;
-	return std::max(0.0f, std::min(1.0f, a * (b - discount) * (b - discount)));
+	float ans = a * (b - discount) * (b - discount);
+	return FenixUtils::clamp01(ans * static_cast<float>(*Settings::InjuryMult));
 }
 
 static float get_armor__1401D7330(RE::InventoryEntryData* item, float armorPerks, float ArmorRating)
@@ -132,11 +126,53 @@ float ActorValueOwner__get_ArmorRating__1403BE980(RE::ActorValueOwner* a, float 
 	return func(a, armoskill);
 }
 
-static float get_damage__1401D72C0(RE::InventoryEntryData* _weap, RE::ActorValueOwner* a, float DamageMult, char mb_isbow)
+float ExtraContainerChanges__get_max_something(RE::InventoryEntryData* item)
 {
-	using func_t = decltype(&get_damage__1401D72C0);
-	REL::Relocation<func_t> func{ REL::ID(15778) };
-	return func(_weap, a, DamageMult, mb_isbow);
+	return _generic_foo_<15752, decltype(ExtraContainerChanges__get_max_something)>::eval(item);
+}
+
+static float smth_smithed(float mb_smithed) {
+	return _generic_foo_<25915, decltype(smth_smithed)>::eval(mb_smithed);
+}
+
+static float ActorValueOwner__get_skill(RE::ActorValueOwner* a1, RE::ActorValue skill)
+{
+	return _generic_foo_<26616, decltype(ActorValueOwner__get_skill)>::eval(a1, skill);
+}
+
+static float get_skill_mult_fair(float skill) {
+	return FenixUtils::lerp<1.0f, 3.0f>(skill * 0.01f);
+}
+
+static float get_damage(RE::InventoryEntryData* _weap, RE::ActorValueOwner* a, float DamageMult)
+{
+	auto weap = _weap->GetObject()->As<RE::TESObjectWEAP>();
+	if (!weap || weap->formType != RE::FormType::Weapon)
+		return 0.0;
+	
+	auto skill_ind = weap->weaponData.skill.get();
+	float damage = weap->GetAttackDamage();
+	auto type = weap->weaponData.animationType.get();
+	float av_damage = 0.0f;
+	float smithed_bonus = (type == RE::WEAPON_TYPE::kCrossbow) ? 0.0f : smth_smithed(ExtraContainerChanges__get_max_something(_weap));
+	switch (type) {
+	case RE::WEAPON_TYPE::kHandToHandMelee:
+		av_damage = a->GetActorValue(RE::ActorValue::kUnarmedDamage);
+		break;
+	case RE::WEAPON_TYPE::kOneHandSword:
+	case RE::WEAPON_TYPE::kOneHandDagger:
+	case RE::WEAPON_TYPE::kOneHandAxe:
+	case RE::WEAPON_TYPE::kOneHandMace:
+	case RE::WEAPON_TYPE::kTwoHandSword:
+	case RE::WEAPON_TYPE::kTwoHandAxe:
+		av_damage = a->GetActorValue(RE::ActorValue::kMeleeDamage);
+		break;
+	default:
+		break;
+	}
+
+	float skill_mult = get_skill_mult_fair(ActorValueOwner__get_skill(a, skill_ind));
+	return (smithed_bonus + damage) * skill_mult * DamageMult + av_damage;
 }
 
 static float get_damage_mult(RE::Actor* attacker)
@@ -162,5 +198,5 @@ float get_damage(RE::Actor* attacker)
 	if (!weap)
 		return unarmed;
 
-	return get_damage__1401D72C0(_weap, attacker->As<RE::ActorValueOwner>(), get_damage_mult(attacker), false);
+	return get_damage(_weap, attacker->As<RE::ActorValueOwner>(), get_damage_mult(attacker));
 }

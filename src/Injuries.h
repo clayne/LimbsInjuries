@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 
 namespace Injuries
 {
@@ -8,28 +9,65 @@ namespace Injuries
 		Body,
 		Arms,
 		Legs,
-		Back
+		Back,
+
+		Total
 	};
 
 	class LimbsInjuriesESP
 	{
-		static const inline auto ESP_NAME = "LimbsInjuries.esp";
-
+		static constexpr auto ESP_NAME = "LimbsInjuries.esp";
 	public:
-		static RE::SpellItem* get_Spell_Head();
-		static RE::SpellItem* get_Spell_Chest();
-		static RE::SpellItem* get_Spell_Leg();
-		static RE::SpellItem* get_Spell_Arms();
+		static void init() {
+			static bool init{ false };
+		}
 
-		static RE::EffectSetting* get_Mgeff_Head();
-		static RE::EffectSetting* get_Mgeff_Chest();
-		static RE::EffectSetting* get_Mgeff_Legs();
-		static RE::EffectSetting* get_Mgeff_Arms();
+		static const std::array<RE::SpellItem*, Total>& spells()
+		{
+			static std::array<RE::SpellItem*, Total> a;
 
-		static RE::BGSMessage* get_Msg_Arms();
-		static RE::BGSMessage* get_Msg_Head();
-		static RE::BGSMessage* get_Msg_Chest();
-		static RE::BGSMessage* get_Msg_Legs();
+			auto handler = RE::TESDataHandler::GetSingleton();
+
+			a[Head] = handler->LookupForm<RE::SpellItem>(RE::FormID(0x81C), ESP_NAME);
+			a[Body] = handler->LookupForm<RE::SpellItem>(RE::FormID(0x81B), ESP_NAME);
+			a[Arms] = handler->LookupForm<RE::SpellItem>(RE::FormID(0x833), ESP_NAME);
+			a[Legs] = handler->LookupForm<RE::SpellItem>(RE::FormID(0x81D), ESP_NAME);
+			a[Back] = nullptr;
+
+			return a;
+		}
+
+		static const std::array<RE::EffectSetting*, Total>& mgeffs()
+		{
+			static std::array<RE::EffectSetting*, Total> a;
+
+			auto handler = RE::TESDataHandler::GetSingleton();
+
+			a[Head] = handler->LookupForm<RE::EffectSetting>(RE::FormID(0x821), ESP_NAME);
+			a[Body] = handler->LookupForm<RE::EffectSetting>(RE::FormID(0x828), ESP_NAME);
+			a[Arms] = handler->LookupForm<RE::EffectSetting>(RE::FormID(0x845), ESP_NAME);
+			a[Legs] = handler->LookupForm<RE::EffectSetting>(RE::FormID(0x834), ESP_NAME);
+			a[Back] = nullptr;
+
+			return a;
+		}
+
+		static const std::array<RE::BGSMessage*, Total>& msgs()
+		{
+			// TODO: cache
+
+			static std::array<RE::BGSMessage*, Total> a;
+
+			auto handler = RE::TESDataHandler::GetSingleton();
+
+			a[Head] = handler->LookupForm<RE::BGSMessage>(RE::FormID(0x841), ESP_NAME);
+			a[Body] = handler->LookupForm<RE::BGSMessage>(RE::FormID(0x842), ESP_NAME);
+			a[Arms] = handler->LookupForm<RE::BGSMessage>(RE::FormID(0x843), ESP_NAME);
+			a[Legs] = handler->LookupForm<RE::BGSMessage>(RE::FormID(0x844), ESP_NAME);
+			a[Back] = nullptr;
+
+			return a;
+		}
 	};
 
 	void apply_injury(Limbs ind, RE::Actor* victim, RE::Actor* attacker);

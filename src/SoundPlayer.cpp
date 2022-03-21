@@ -1,67 +1,19 @@
 #include "SoundPlayer.h"
+#include <UselessFenixUtils.h>
 
 
 namespace Sounds
 {
-	void* BSAudioManager__GetSingleton()
-	{
-		using func_t = decltype(&BSAudioManager__GetSingleton);
-		REL::Relocation<func_t> func{ RE::Offset::BSAudioManager::GetSingleton };
-		return func();
-	}
-
-	int PlaySound_func1_140BEEE70(void* manager, RE::BSSoundHandle* a2, int a3, int a4)
-	{
-		using func_t = decltype(&PlaySound_func1_140BEEE70);
-		REL::Relocation<func_t> func{ REL::ID(66401) };
-		return func(manager, a2, a3, a4);
-	}
-
-	char set_sound_position(RE::BSSoundHandle* a1, float x, float y, float z)
-	{
-		using func_t = decltype(&set_sound_position);
-		REL::Relocation<func_t> func{ REL::ID(66370) };
-		return func(a1, x, y, z);
-	}
-
-	void PlaySound_func3_140BEDB10(RE::BSSoundHandle* a1, RE::NiAVObject* source_node)
-	{
-		using func_t = decltype(&PlaySound_func3_140BEDB10);
-		REL::Relocation<func_t> func{ REL::ID(66375) };
-		return func(a1, source_node);
-	}
-
-	char PlaySound_func4_140BEDB10(RE::BSSoundHandle* a1)
-	{
-		using func_t = decltype(&PlaySound_func4_140BEDB10);
-		REL::Relocation<func_t> func{ REL::ID(66355) };
-		return func(a1);
-	}
-
-	void play_sound(RE::TESObjectREFR* a, int formid)
-	{
-		RE::BSSoundHandle handle;
-		handle.soundID = static_cast<uint32_t>(-1);
-		handle.assumeSuccess = false;
-		*(uint32_t*)&handle.state = 0;
-
-		auto manager = BSAudioManager__GetSingleton();
-		PlaySound_func1_140BEEE70(manager, &handle, formid, 16);
-		if (set_sound_position(&handle, a->data.location.x, a->data.location.y, a->data.location.z)) {
-			PlaySound_func3_140BEDB10(&handle, a->Get3D());
-			PlaySound_func4_140BEDB10(&handle);
-		}
-	}
-
 	class Storage
 	{
 	public:
-		static constexpr std::array<int, static_cast<size_t>(SoundTypes::Total)> storage = { 0x0003C845, 0x0004D2DA, 0x0004D2DE, 0x000AF63E, 0x0003C856, 0x0003C73C, 0x0003C85A, 0x0003C744, 0x0009CE5B, 0x000DAB82, 0x000E8E8B, 0x000DCAF7 };
+		static constexpr std::array<int, static_cast<size_t>(SoundTypes::Total)> sounds_storage = { 0x0003C845, 0x0004D2DA, 0x0004D2DE, 0x000AF63E, 0x0003C856, 0x0003C73C, 0x0003C85A, 0x0003C744, 0x0009CE5B, 0x000DAB82, 0x000E8E8B, 0x000DCAF7 };
+		static constexpr std::array<int, static_cast<size_t>(SoundTypes::Total)> impact_storage = { 0x000193B5, 0x0004BB54, 0x000193B6, 0x00013CBA, 0x0004BB52, 0x0004BB52, 0x0004BB52, 0x000193B6, 0x0004BB52, 0x0004BB52, 0x0004BB52, 0x0004BB52 };
 	};
 
 	void play_sound(RE::TESObjectREFR* a, SoundTypes type)
 	{
-		play_sound(a, Storage::storage[static_cast<size_t>(type)]);
+		FenixUtils::play_sound(a, Storage::sounds_storage[static_cast<size_t>(type)]);
 	}
 
 	enum class ArmorTypes
@@ -135,11 +87,11 @@ namespace Sounds
 	SoundTypes get_nopen_sound_type_arrow(ArmorTypes armo)
 	{
 		switch (armo) {
-		case Sounds::ArmorTypes::Clot:
+		case ArmorTypes::Clot:
 			return SoundTypes::ArroBounClot;
-		case Sounds::ArmorTypes::Iron:
+		case ArmorTypes::Iron:
 			return SoundTypes::ArroBounIron;
-		case Sounds::ArmorTypes::Smth:
+		case ArmorTypes::Smth:
 			return SoundTypes::ArroBounSmth;
 		default:
 			return SoundTypes::ArroBounClot;

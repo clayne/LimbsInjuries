@@ -12,30 +12,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-bool random(float prop);
-void damageav(RE::Actor* victim, RE::ACTOR_VALUE_MODIFIERS::ACTOR_VALUE_MODIFIER i1, RE::ActorValue i2, float val, RE::Actor* attacker);
-RE::TESObjectWEAP* get_UnarmedWeap();
-float GetHeadingAngle(RE::TESObjectREFR* a, const RE::NiPoint3& a_pos, bool a_abs);
-void UnequipItem(RE::Actor* a, RE::TESBoundObject* item);
 void Actor__DoCombatSpellApply_1406282E0(RE::Actor* caster, RE::SpellItem* spell, RE::Actor* target);
-void knock(RE::Actor* target, RE::Actor* aggressor, float KnockDown);
-void cast_spell(RE::Actor* victim, RE::Actor* attacker, RE::SpellItem* spell);
-float PlayerCharacter__get_reach(RE::Actor* a);
-RE::NiPoint3* Actor__get_eye_pos(RE::Actor* me, RE::NiPoint3* ans, int mb_type);
-
-template <float val = 0.5f>
-void stagger(RE::Actor* victim, RE::Actor* attacker = nullptr)
-{
-	float stagDir = 0.0f;
-	if (attacker && victim->GetHandle() != attacker->GetHandle()) {
-		auto heading = GetHeadingAngle(victim, attacker->GetPosition(), false);
-		stagDir = (heading >= 0.0f) ? heading / 360.0f : (360.0f + heading) / 360.0f;
-	}
-
-	victim->SetGraphVariableFloat("staggerDirection", stagDir);
-	victim->SetGraphVariableFloat("staggerMagnitude", val);
-	victim->NotifyAnimationGraph("staggerStart");
-}
 
 constexpr uint32_t hash(const char* data, size_t const size) noexcept
 {
