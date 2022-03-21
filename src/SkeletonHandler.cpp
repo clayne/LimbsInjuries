@@ -1795,18 +1795,12 @@ float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* v
 	auto locational_data = get_LocationalArmor(victim, type, hit_pos, eye_pos);
 	float avg_armor = locational_data.second;
 	auto min_dist_ind = locational_data.first;
-
-	//logger::info("here5");
-
 	float discount = get_discount(attack, avg_armor);
-
-	//logger::info("here6");
+	const char* node_name = NodeNames[type][std::get<1>(bones[min_dist_ind])];
 
 #ifdef DEBUG
 	logger::info("attack = {}, avg_armor = {}, discount = {}, ans = {}", attack, avg_armor, discount, DamageResist + discount);
 #endif
-
-	const char* node_name = NodeNames[type][std::get<1>(bones[min_dist_ind])];
 
 	if (!try_penetrate(discount, attack)) {
 	//if (true) {
