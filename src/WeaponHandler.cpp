@@ -171,7 +171,8 @@ static float get_damage(RE::InventoryEntryData* _weap, RE::ActorValueOwner* a, f
 		break;
 	}
 
-	float skill_mult = get_skill_mult_fair(ActorValueOwner__get_skill(a, skill_ind));
+	float skill = ((uint32_t)skill_ind - 6 > 0x11) ? 100.0f : ActorValueOwner__get_skill(a, skill_ind);
+	float skill_mult = get_skill_mult_fair(skill);
 	return (smithed_bonus + damage) * skill_mult * DamageMult + av_damage;
 }
 

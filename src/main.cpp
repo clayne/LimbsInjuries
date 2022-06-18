@@ -2,6 +2,7 @@
 #include <Hooks.h>
 #include "Events.h"
 #include <Injuries.h>
+#include "Settings.h"
 
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
@@ -57,6 +58,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	SKSE::Init(a_skse);
 	Hooks::apply_hooks();
 	EventHandler::Register();
+	Settings::load();
 
 	return true;
 }

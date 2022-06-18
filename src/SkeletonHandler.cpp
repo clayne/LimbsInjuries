@@ -5,10 +5,9 @@
 #include "DebugAPI.h"
 #include "SoundPlayer.h"
 #include <UselessFenixUtils.h>
+#include "DataHandler.h"
 
 using RE::NiPoint3;
-
-const float FLOAT_DELTA = 0.00001f;
 
 enum Skeletons
 {
@@ -140,7 +139,7 @@ inline const std::vector<const char*> NodeNames[] = {
 	},
 	{
 		// Giant
-		"NPC L Mouth", "NPC Head [Head]", "NPC Neck [Neck]",                                  // 0 1 2
+		"NPC L Mouth", "NPC Head [Head]", "NPC Neck [Neck]1",                                 // 0 1 2
 		"NPC Spine [Spn0]",                                                                   // 3
 		"NPC L Thigh [LThg]", "NPC L Calf [LClf]", "NPC L Foot [Lft ]", "NPC L Toe0 [LToe]",  // 4 5 6 7
 		"NPC R Thigh [RThg]", "NPC R Calf [RClf]", "NPC R Foot [Rft ]", "NPC R Toe0 [RToe]",  // 8 9 10 11
@@ -1453,7 +1452,11 @@ auto& get_skeleton_path(RE::Actor* a)
 bool isHumanoid(RE::Actor* a, Skeletons type)
 {
 	auto& nodeNames = NodeNames[type];
+
+#ifdef DEBUG
 	logger::info("checking {}. skeleton at {}", a->GetName(), get_skeleton_path(a));
+#endif  // DEBUG
+
 	bool ans = true;
 	for (int i = 0; i < nodeNames.size(); i++) {
 		auto node = a->GetNodeByName(nodeNames[i]);
@@ -1463,25 +1466,63 @@ bool isHumanoid(RE::Actor* a, Skeletons type)
 			break;
 		}
 
-		//logger::info("    {} at {}", i, to_string(node->world.translate));
+#ifdef DEBUG
+		//logger::info("    {} ({}) at {}", nodeNames[i], i, to_string(node->world.translate));
+#endif  // DEBUG
 	}
 	return ans;
 }
 
-void play_impact(RE::Actor* a, const char* bone_name, RE::BGSImpactData* impact)
+RE::NiPoint3 TransformVectorByMatrix(const RE::NiPoint3& a_vector, const RE::NiMatrix3& a_matrix)
 {
+	return RE::NiPoint3(a_matrix.entry[0][0] * a_vector.x + a_matrix.entry[0][1] * a_vector.y + a_matrix.entry[0][2] * a_vector.z,
+		a_matrix.entry[1][0] * a_vector.x + a_matrix.entry[1][1] * a_vector.y + a_matrix.entry[1][2] * a_vector.z,
+		a_matrix.entry[2][0] * a_vector.x + a_matrix.entry[2][1] * a_vector.y + a_matrix.entry[2][2] * a_vector.z);
+}
+
+RE::BSTempEffectParticle* CELL__PlaceParticleEffect(RE::TESObjectCELL* _this, float a_lifetime, const char* a_modelName, const RE::NiMatrix3& a_normal, const NiPoint3& a_pos, float a_scale, std::uint32_t a_flags, RE::NiAVObject* a_target)
+{
+	using func_t = decltype(&CELL__PlaceParticleEffect);
+	REL::Relocation<func_t> func{ REL::ID(29219) };
+	return func(_this, a_lifetime, a_modelName, a_normal, a_pos, a_scale, a_flags, a_target);
+}
+
+void draw_player_weapon(float)
+{
+	//NiPoint3 tmp;
+	auto a = RE::PlayerCharacter::GetSingleton();
+	float reach = FenixUtils::PlayerCharacter__get_reach(a) * 0.1f;
+	//Character__get_weapon_vector_625DD0(attacker, false, &tmp);
+	//draw_line<GRN>(eye_pos, eye_pos + tmp * reach);
 	auto root = netimmerse_cast<RE::BSFadeNode*>(a->Get3D());
 	if (!root)
 		return;
-	auto bone = netimmerse_cast<RE::NiNode*>(root->GetObjectByName(bone_name));
+	auto bone = netimmerse_cast<RE::NiNode*>(root->GetObjectByName("WEAPON"));
 	if (!bone)
 		return;
+	RE::NiPoint3 startPos = bone->world.translate;
+	auto weaponDirection = TransformVectorByMatrix({ 0.0f, 1.0f, 0.0f }, bone->world.rotate);
+	RE::NiPoint3 endPos = startPos + weaponDirection * reach;
+	//draw_line<BLU, 100>(startPos, endPos);
+	auto hud = DebugAPI::GetHUD();
+	if (!hud || !hud->uiMovie)
+		return;
+	glm::vec3 from = { startPos.x, startPos.y, startPos.z };
+	glm::vec3 to = { endPos.x, endPos.y, endPos.z };
+	DebugAPI::DrawLine3D(hud->uiMovie, from, to, BLU, 5.0f);
+}
 
-	RE::NiPoint3 from = bone->world.translate;
-	RE::NiPoint3 P_V = { 0.0f, 0.0f, 0.0f };
-
-	// TODO: cache impact
-	FenixUtils::play_impact(a, impact, &P_V, &from, bone);
+void get_attacker_thing_melee(RE::Actor* attacker, NiPoint3& hit_pos, NiPoint3& eye_pos)
+{
+	float reach = FenixUtils::PlayerCharacter__get_reach(attacker) * 0.75f;
+	FenixUtils::Actor__get_eye_pos(attacker, &hit_pos, 1);
+	eye_pos = hit_pos;
+	if (attacker->IsPlayerRef()) {
+		hit_pos += rotate(reach, attacker->data.angle);
+	} else {
+		hit_pos += (attacker->data.location - hit_pos) * 0.25f;
+		hit_pos += rotateZ(reach, attacker->data.angle);
+	}
 }
 
 Skeletons get_skeleton_type(const RE::BSFixedString& path)
@@ -1588,11 +1629,11 @@ std::pair<uint32_t, float> get_LocationalArmor(RE::Actor* victim, Skeletons type
 {
 	auto& bones = Bones[type];
 
-	//logger::info("here1");
+	//logger::info("get_bones_dists start");
 
 	auto dists = get_bones_dists(victim, type, eye_pos, hit_pos);
 
-	//logger::info("here2");
+	//logger::info("get_bones_dists end");
 
 	float min_dist = dists[0];
 	int min_dist_ind = 0;
@@ -1644,6 +1685,36 @@ std::pair<uint32_t, float> get_LocationalArmor(RE::Actor* victim, Skeletons type
 	return { min_dist_ind, avg_armor };
 }
 
+RE::BSTempEffectParticle* play_impact(RE::Actor* attacker, RE::Actor* victim, const char* nodename, const std::string& nifpath)
+{
+	auto cell = attacker->GetParentCell();
+	if (!cell)
+		return nullptr;
+
+	auto victim_root = netimmerse_cast<RE::BSFadeNode*>(victim->Get3D());
+	if (!victim_root)
+		return nullptr;
+	auto victim_bone = netimmerse_cast<RE::NiNode*>(victim_root->GetObjectByName(nodename));
+	if (!victim_bone)
+		return nullptr;
+
+	auto attacker_root = netimmerse_cast<RE::BSFadeNode*>(attacker->Get3D());
+	if (!attacker_root)
+		return nullptr;
+
+	return CELL__PlaceParticleEffect(cell, 0.0f, nifpath.c_str(), attacker_root->world.rotate, victim_bone->world.translate, 1.0f, 7U, attacker_root);
+}
+
+void play_impact_bounce(RE::Actor* attacker, RE::Actor* victim, const char* nodename)
+{
+	play_impact(attacker, victim, nodename, *Settings::DataImpactBounce);
+}
+
+void play_impact_injury(RE::Actor* attacker, RE::Actor* victim, const char* nodename)
+{
+	play_impact(attacker, victim, nodename, *Settings::DataImpactInjury);
+}
+
 void try_injury(Limbs limb, float damage_mult, RE::Actor* victim, RE::Actor* attacker, const char* node_name)
 {
 #ifdef DEBUG
@@ -1656,7 +1727,7 @@ void try_injury(Limbs limb, float damage_mult, RE::Actor* victim, RE::Actor* att
 		logger::info("DONE");
 #endif
 
-		play_impact(victim, node_name, RE::TESForm::LookupByID<RE::BGSImpactData>(0x000FFF4A));
+		play_impact_injury(attacker, victim, node_name);
 		apply_injury(limb, victim, attacker);
 	}
 }
@@ -1678,6 +1749,32 @@ bool try_penetrate(float discount, float attack)
 	return true;
 }
 
+bool test_skeleton(RE::Actor* a) {
+	auto& path = get_skeleton_path(a->race, RE::SEX::kMale);
+	auto type = get_skeleton_type(path);
+	if (type == Unknown) {
+#ifdef DEBUG
+		logger::info("unknown creature {}, path = {}", a->GetActorBase()->formID, path);
+#endif  // DEBUG
+		return true;
+	}
+	if (type == Other) {
+		return true;
+	}
+
+	if (!isHumanoid(a, type)) {
+#ifdef DEBUG
+		logger::info("{} is NOT valid", a->race->formID);
+#endif  // DEBUG
+		return false;
+	} else {
+#ifdef DEBUG
+		logger::info("{} is valid", a->race->formID);
+#endif  // DEBUG
+		return true;
+	}
+}
+
 void test_skeletons()
 {
 	auto& array = RE::ProcessLists::GetSingleton()->highActorHandles;
@@ -1686,22 +1783,8 @@ void test_skeletons()
 		auto a = i.get().get();
 		if (!a)
 			continue;
-		auto& path = get_skeleton_path(a->race, RE::SEX::kMale);
-		auto type = get_skeleton_type(path);
-		if (type == Unknown) {
-			logger::info("unknown creature {}, path = {}", a->GetActorBase()->formID, path);
-			continue;
-		}
-		if (type == Other) {
-			continue;
-		}
-
-		if (!isHumanoid(a, type)) {
-			logger::info("{} is NOT valid", a->race->formID);
-		} else {
-			logger::info("{} is valid", a->race->formID);
-		}
 		
+		test_skeleton(a);
 	}
 }
 
@@ -1710,51 +1793,6 @@ char Character__get_weapon_vector_625DD0(RE::Actor* a, char left, RE::NiPoint3* 
 	using func_t = decltype(&Character__get_weapon_vector_625DD0);
 	REL::Relocation<func_t> func{ REL::ID(37620) };
 	return func(a, left, P);
-}
-
-RE::NiPoint3 TransformVectorByMatrix(const RE::NiPoint3& a_vector, const RE::NiMatrix3& a_matrix)
-{
-	return RE::NiPoint3(a_matrix.entry[0][0] * a_vector.x + a_matrix.entry[0][1] * a_vector.y + a_matrix.entry[0][2] * a_vector.z,
-		a_matrix.entry[1][0] * a_vector.x + a_matrix.entry[1][1] * a_vector.y + a_matrix.entry[1][2] * a_vector.z,
-		a_matrix.entry[2][0] * a_vector.x + a_matrix.entry[2][1] * a_vector.y + a_matrix.entry[2][2] * a_vector.z);
-}
-
-void draw_player_weapon(float )
-{
-	//NiPoint3 tmp;
-	auto a = RE::PlayerCharacter::GetSingleton();
-	float reach = FenixUtils::PlayerCharacter__get_reach(a) * 0.75f;
-	//Character__get_weapon_vector_625DD0(attacker, false, &tmp);
-	//draw_line<GRN>(eye_pos, eye_pos + tmp * reach);
-	auto root = netimmerse_cast<RE::BSFadeNode*>(a->Get3D());
-	if (!root)
-		return;
-	auto bone = netimmerse_cast<RE::NiNode*>(root->GetObjectByName("WEAPON"));
-	if (!bone)
-		return;
-	RE::NiPoint3 startPos = bone->world.translate;
-	auto weaponDirection = TransformVectorByMatrix({ 0.0f, 1.0f, 0.0f }, bone->world.rotate);
-	RE::NiPoint3 endPos = startPos + weaponDirection * reach;
-	//draw_line<BLU, 100>(startPos, endPos);
-	auto hud = DebugAPI::GetHUD();
-	if (!hud || !hud->uiMovie)
-		return;
-	glm::vec3 from = { startPos.x, startPos.y, startPos.z };
-	glm::vec3 to = { endPos.x, endPos.y, endPos.z };
-	DebugAPI::DrawLine3D(hud->uiMovie, from, to, BLU, 5.0f);
-}
-
-void get_attacker_thing_melee(RE::Actor* attacker, NiPoint3& hit_pos, NiPoint3& eye_pos)
-{
-	float reach = FenixUtils::PlayerCharacter__get_reach(attacker) * 0.75f;
-	FenixUtils::Actor__get_eye_pos(attacker, &hit_pos, 1);
-	eye_pos = hit_pos;
-	if (attacker->IsPlayerRef()) {
-		hit_pos += rotate(reach, attacker->data.angle);
-	} else {
-		hit_pos += (attacker->data.location - hit_pos) * 0.25f;
-		hit_pos += rotateZ(reach, attacker->data.angle);
-	}
 }
 
 float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* victim, RE::Actor* attacker)
@@ -1768,7 +1806,7 @@ float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* v
 #endif  // DEBUG
 
 	auto type = get_skeleton_type(victim);
-	if (type == Other || type == Unknown) {
+	if (victim->IsChild() || victim->IsDead(false) || type == Other || type == Unknown || !test_skeleton(victim)) {
 		return ArmorRating + DamageResist;
 	}
 	auto& bones = Bones[type];
@@ -1802,18 +1840,25 @@ float LocationalDamage_melee(float ArmorRating, float DamageResist, RE::Actor* v
 	logger::info("attack = {}, avg_armor = {}, discount = {}, ans = {}", attack, avg_armor, discount, DamageResist + discount);
 #endif
 
+	Limbs limb = std::get<3>(bones[min_dist_ind]);
+
 	if (!try_penetrate(discount, attack)) {
-	//if (true) {
+		//if (true) {
 		Sounds::play_sound_nopen_melee(attacker, victim);
-		play_impact(victim, node_name, RE::TESForm::LookupByID<RE::BGSImpactData>(0x0004BB52));
+		play_impact_bounce(attacker, victim, node_name);
+
+#ifdef DEBUG
+		//play_impact_injury(attacker, victim, node_name);
+#endif
+
 		return -1.0f;
 	}
 
-	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker, node_name);
+	try_injury(limb, discount, victim, attacker, node_name);
 
 #ifdef DEBUG
 	//apply_injury(Limbs::Arms, victim, attacker);
-	//play_impact(victim, NodeNames[type][std::get<1>(bones[min_dist_ind])], RE::TESForm::LookupByID<RE::BGSImpactData>(0x000D309E));
+	//play_impact_injury(victim, NodeNames[type][std::get<1>(bones[min_dist_ind])]);
 	//SKSE::GetTaskInterface()->AddTask([attacker]() { play_impact(attacker); });
 #endif
 
@@ -1831,8 +1876,12 @@ void get_attacker_thing_proj(RE::Projectile* proj, NiPoint3& hit_pos, NiPoint3& 
 
 float LocationalDamage_proj(float ArmorRating, float DamageResist, RE::Actor* victim, RE::Actor* attacker, RE::ArrowProjectile* proj)
 {
+#ifdef DEBUG
+	//test_skeletons();
+#endif  // DEBUG
+
 	auto type = get_skeleton_type(victim);
-	if (type == Other || type == Unknown) {
+	if (victim->IsChild() || victim->IsDead(false) || type == Other || type == Unknown || !test_skeleton(victim)) {
 		return ArmorRating + DamageResist;
 	}
 	auto& bones = Bones[type];
@@ -1858,16 +1907,17 @@ float LocationalDamage_proj(float ArmorRating, float DamageResist, RE::Actor* vi
 #endif
 
 	const char* node_name = NodeNames[type][std::get<1>(bones[min_dist_ind])];
+	Limbs limb = std::get<3>(bones[min_dist_ind]);
 
 	if (!try_penetrate(discount, attack)) {
 	//if (true) {
 		proj->impactResult = RE::ImpactResult::kBounce;
 		Sounds::play_sound_nopen_arrow(attacker, victim);
-		play_impact(victim, node_name, RE::TESForm::LookupByID<RE::BGSImpactData>(0x0004BB52));
+		play_impact_bounce(attacker, victim, node_name);
 		return -1.0f;
 	}
 
-	try_injury(std::get<3>(bones[min_dist_ind]), discount, victim, attacker, node_name);
+	try_injury(limb, discount, victim, attacker, node_name);
 
 #ifdef DEBUG
 	//apply_injury(Limbs::Legs, victim, attacker);

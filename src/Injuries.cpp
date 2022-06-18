@@ -37,6 +37,20 @@ namespace Injuries
 	template<int id>
 	void debug_notification(RE::Actor* victim, RE::Actor* attacker)
 	{
+		auto mode = Settings::Notification.get_mode();
+
+		if (mode == Settings::NotificationModes::Disable)
+			return;
+
+		if (mode == Settings::NotificationModes::Radius && !victim->IsPlayerRef() && !attacker->IsPlayerRef()) {
+			float dist1 = FenixUtils::get_dist2(RE::PlayerCharacter::GetSingleton(), attacker);
+			float dist2 = FenixUtils::get_dist2(RE::PlayerCharacter::GetSingleton(), victim);
+			float dist = std::min(dist1, dist2);
+			//logger::info("dist = {}, r = {}", dist, Settings::Notification.get_radius());
+			if (dist > Settings::Notification.get_radius())
+				return;
+		}
+
 		return debug_notification(victim, attacker, LimbsInjuriesESP::msgs()[id]);
 	}
 
@@ -58,7 +72,7 @@ namespace Injuries
 			helmet = victim->GetWornArmor(RE::BGSBipedObjectForm::BipedObjectSlot::kHair);
 		FenixUtils::UnequipItem(victim, helmet);
 		
-		cast_spell<Head>(victim, attacker);
+		cast_spell<Head>(victim, victim);
 	}
 
 	void apply_body_injury(RE::Actor* victim, RE::Actor* attacker)
@@ -66,16 +80,16 @@ namespace Injuries
 		debug_notification<Body>(victim, attacker);
 		Sounds::play_sound(victim, Sounds::SoundTypes::InjuBody);
 
-		FenixUtils::damageav(victim, RE::ACTOR_VALUE_MODIFIERS::kDamage, RE::ActorValue::kStamina, -1000000000.0f, attacker);
+		FenixUtils::damageav(victim, RE::ACTOR_VALUE_MODIFIERS::kDamage, RE::ActorValue::kStamina, -0.5f * FenixUtils::get_total_av(victim, RE::ActorValue::kStamina), attacker);
 
-		RE::MagicCaster* caster = attacker->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
+		RE::MagicCaster* caster = victim->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		auto spell = LimbsInjuriesESP::spells()[Body];
 		if (caster && spell) {
 			float sum = 0.0f;
 			sum += victim->GetBaseActorValue(RE::ActorValue::kHealth);
 			sum += victim->GetBaseActorValue(RE::ActorValue::kMagicka);
 			sum += victim->GetBaseActorValue(RE::ActorValue::kStamina);
-			caster->InstantCast(spell, false, victim, 1.0f, false, sum / 6.0f, attacker);
+			caster->CastSpellImmediate(spell, false, victim, 1.0f, false, sum / 6.0f, victim);
 		}
 	}
 
@@ -84,9 +98,10 @@ namespace Injuries
 		debug_notification<Arms>(victim, attacker);
 		Sounds::play_sound(victim, Sounds::SoundTypes::InjuArms);
 
-		unequip_weapons(victim);
+		if (*Settings::InjuryArmUnequip)
+			unequip_weapons(victim);
 
-		cast_spell<Arms>(victim, attacker);
+		cast_spell<Arms>(victim, victim);
 	}
 
 	void apply_legs_injury(RE::Actor* victim, RE::Actor* attacker)
@@ -99,7 +114,7 @@ namespace Injuries
 		else
 			FenixUtils::knock(victim, attacker, 5.0f);
 
-		cast_spell<Legs>(victim, attacker);
+		cast_spell<Legs>(victim, victim);
 	}
 
 	void apply_injury(Limbs ind, RE::Actor* victim, RE::Actor* attacker)
@@ -114,7 +129,7 @@ namespace Injuries
 		case Limbs::Legs:
 			return apply_legs_injury(victim, attacker);
 		default:
-			break;
+			return;
 		}
 	}
 

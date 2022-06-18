@@ -109,6 +109,8 @@ set(SOURCES
   src/SoundPlayer.h
   src/SoundPlayer.cpp
   src/Settings.h
+  src/DataHandler.h
+  src/DataHandler.cpp
 )
 
 source_group(
