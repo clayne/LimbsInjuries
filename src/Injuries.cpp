@@ -65,7 +65,7 @@ namespace Injuries
 		debug_notification<Head>(victim, attacker);
 		Sounds::play_sound(victim, Sounds::SoundTypes::InjuHead);
 
-		FenixUtils::damageav(victim, RE::ACTOR_VALUE_MODIFIERS::kDamage, RE::ActorValue::kMagicka, -1000000.0f, attacker);
+		FenixUtils::damageav(victim, RE::ActorValue::kMagicka, -1000000.0f);
 
 		auto helmet = victim->GetWornArmor(RE::BGSBipedObjectForm::BipedObjectSlot::kHead);
 		if (!helmet)
@@ -80,7 +80,7 @@ namespace Injuries
 		debug_notification<Body>(victim, attacker);
 		Sounds::play_sound(victim, Sounds::SoundTypes::InjuBody);
 
-		FenixUtils::damageav(victim, RE::ACTOR_VALUE_MODIFIERS::kDamage, RE::ActorValue::kStamina, -0.5f * FenixUtils::get_total_av(victim, RE::ActorValue::kStamina), attacker);
+		FenixUtils::damageav(victim, RE::ActorValue::kStamina, -0.5f * FenixUtils::get_total_av(victim, RE::ActorValue::kStamina));
 
 		RE::MagicCaster* caster = victim->GetMagicCaster(RE::MagicSystem::CastingSource::kInstant);
 		auto spell = LimbsInjuriesESP::spells()[Body];
@@ -109,10 +109,11 @@ namespace Injuries
 		debug_notification<Legs>(victim, attacker);
 		Sounds::play_sound(victim, Sounds::SoundTypes::InjuLegs);
 
-		if (victim->IsPlayerRef())
-			FenixUtils::stagger<1.0f>(victim, attacker);
-		else
-			FenixUtils::knock(victim, attacker, 5.0f);
+		//if (victim->IsPlayerRef())
+		//	FenixUtils::stagger<1.0f>(victim, attacker);
+		//else
+		//	FenixUtils::knock(victim, attacker, 5.0f);
+		FenixUtils::stagger<1.0f>(victim, attacker);
 
 		cast_spell<Legs>(victim, victim);
 	}

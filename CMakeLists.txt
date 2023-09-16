@@ -1,8 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
-
-# ---- Options ----
-
-option(COPY_BUILD "Copy the build output to the Skyrim directory." OFF)
+cmake_minimum_required(VERSION 3.21)
 
 # ---- Cache build vars ----
 
@@ -12,18 +8,22 @@ macro(set_from_environment VARIABLE)
 	endif ()
 endmacro()
 
-set_from_environment(Skyrim64Path)
+# ---- Vcpkg check ----
 set_from_environment(VCPKG_ROOT)
-
-if (DEFINED VCPKG_ROOT)
-	set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-	set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "")
-else ()
+if (NOT DEFINED VCPKG_ROOT)
 	message(
-		WARNING
-		"Variable VCPKG_ROOT is not set. Continuing without vcpkg."
+		FATAL_ERROR
+		"Variable VCPKG_ROOT is not set."
 	)
 endif ()
+
+# ---- Include guards ----
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+	message(
+		FATAL_ERROR
+			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+	)
+endif()
 
 set(Boost_USE_STATIC_RUNTIME OFF CACHE BOOL "")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "")
@@ -48,15 +48,6 @@ configure_file(
 	@ONLY
 )
 
-# ---- Include guards ----
-
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-	message(
-		FATAL_ERROR
-			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
-	)
-endif()
-
 # ---- Globals ----
 
 if (MSVC)
@@ -76,11 +67,18 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
 
 set(Boost_USE_STATIC_LIBS ON)
 
+if (DEFINED UseUselessUtils AND UseUselessUtils)
+	add_compile_definitions(USELESS_UTILS)
+endif ()
+
 
 # ---- Dependencies ----
 
-#add_subdirectory($ENV{CommonLibSSE} $ENV{CommonLibSSE}/build)
-add_subdirectory($ENV{UselessFenixUtils} $ENV{UselessFenixUtils}/build)
+if (DEFINED UseUselessUtils AND UseUselessUtils)
+	add_subdirectory($ENV{UselessFenixUtils} ./UselessFenixUtils/build)
+else ()
+	add_subdirectory($ENV{CommonLibSSE} ./CommonLibSSE/build)
+endif ()
 
 find_package(spdlog REQUIRED CONFIG)
 find_package(AutoTOML REQUIRED CONFIG)
@@ -90,7 +88,7 @@ find_package(AutoTOML REQUIRED CONFIG)
 set(SOURCES
 	src/main.cpp
 	src/PCH.h
-  src/Hooks.cpp
+	src/Hooks.cpp
   src/Hooks.h
   src/Geom.cpp
   src/Geom.h
@@ -156,14 +154,23 @@ target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
 		CommonLibSSE::CommonLibSSE
-		UselessFenixUtils::UselessFenixUtils
 		spdlog::spdlog
 )
+
+if (DEFINED UseUselessUtils AND UseUselessUtils)
+	target_link_libraries(
+		${PROJECT_NAME}
+		PRIVATE
+			UselessFenixUtils::UselessFenixUtils
+	)
+endif ()
 
 if (MSVC)
 	target_compile_options(
 		${PROJECT_NAME}
 		PRIVATE
+      /std:c17
+      
 			/sdl	# Enable Additional Security Checks
 			/utf-8	# Set Source and Executable character sets to UTF-8
 			/Zi	# Debug Information Format
@@ -217,21 +224,3 @@ target_precompile_headers(
 	PRIVATE
 		src/PCH.h
 )
-
-# ---- Post build ----
-
-if (COPY_BUILD)
-	if (DEFINED Skyrim64Path)
-		add_custom_command(
-			TARGET ${PROJECT_NAME}
-			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${Skyrim64Path}/Data/SKSE/Plugins/
-			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> ${Skyrim64Path}/Data/SKSE/Plugins/
-		)
-	else ()
-		message(
-			WARNING
-			"Variable Skyrim64Path is not defined. Skipping post-build copy command."
-		)
-	endif ()
-endif ()

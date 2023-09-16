@@ -23,3 +23,8 @@ namespace logger = SKSE::log;
 #include "AutoTOML.hpp"
 #include "Util.h"
 #include "Settings.h"
+#include "UselessFenixUtils.h"
+
+#ifdef GetObject
+#	undef GetObject
+#endif
